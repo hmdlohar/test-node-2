@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>This is home page</title>
+</head>
+<body>
+	<h1>Home page of great app</h1>
+	<input type="number" id="txtRollNo">
+	<input type="text" id="txtName">
+	<input type="button" value="Insert Student" onclick="fnInsertStudent()">
+	<table>
+		<thead>
+			<tr>
+				<th>Roll No</th>
+				<th>Name</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody id="tblStudent">
+			
+		</tbody>
+	</table>
+</body>
+</html>
+<script type="text/javascript" src="jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	loadStudents();
+});
+
+function fnInsertStudent(){
+	insertStudent($("#txtRollNo").val(),$("#txtName").val());
+}
+
+function loadStudents(){
+	$.ajax({
+		url:"/getStudent",
+		success:function(data){
+			console.log(data);
+			$("#tblStudent").empty();
+			for(d of data){
+				$("#tblStudent").append("<tr>\
+				<td>"+d.roll_no+"</td>\
+				<td>"+d.name+"</td>\
+				<td>\
+					<input type='button' onclick='deleteStudent("+d.roll_no+")' value='Del'>\
+				</td>\
+			</tr>");
+			}
+		},
+		error:function(err){
+			console.log(err.responseText);
+		}
+	});
+}
+
+function insertStudent(roll_no,name){
+	$.ajax({
+		url:"/insertStudent?name="+name+"&roll_no="+roll_no,
+		success:function(data){
+			console.log(data);
+			loadStudents();
+		},
+		error:function(err){
+			console.log(err.responseText);
+		}
+	});
+}
+function deleteStudent(roll_no){
+	$.ajax({
+		url:"/deleteStudent?roll_no="+roll_no,
+		success:function(data){
+			console.log(data);
+			loadStudents();
+		},
+		error:function(err){
+			console.log(err.responseText);
+		}
+	})
+}
+</script>
